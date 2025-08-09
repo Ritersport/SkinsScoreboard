@@ -1,5 +1,6 @@
 package com.ritesrport.skinsscoreboard.data
 
+import com.ritesrport.skinsscoreboard.domain.GameConstants.HOLE_PARS
 import com.ritesrport.skinsscoreboard.domain.HoleData
 import com.ritesrport.skinsscoreboard.domain.HoleInputRepository
 import com.ritesrport.skinsscoreboard.domain.Player
@@ -7,7 +8,6 @@ import com.ritesrport.skinsscoreboard.domain.PlayerResults
 
 class HoleInputRepositoryImpl : HoleInputRepository {
 
-    private val holePars = arrayOf(4, 5, 3/*, 5, 4, 3, 4, 5, 4, 4, 5, 3, 4, 4, 3, 4, 4, 4*/)
     private var playerNames: Array<String> = Array(2) { getDefaultPlayerName(it) }
     private var results: Array<PlayerResults> = Array(2) { PlayerResults() }
 
@@ -24,14 +24,14 @@ class HoleInputRepositoryImpl : HoleInputRepository {
     }
 
     override suspend fun getHoleData(holeNumber: Int): HoleData? {
-        if (holeNumber > holePars.size) {
+        if (holeNumber > HOLE_PARS.size) {
             return null
         }
-        return HoleData(holeNumber, holePars[holeNumber - 1])
+        return HoleData(holeNumber, HOLE_PARS[holeNumber - 1])
     }
 
     override suspend fun getFirstHole(): HoleData {
-        return HoleData(1, holePars[0])
+        return HoleData(1, HOLE_PARS[0])
     }
 
     override suspend fun getPlayerName(number: Int): String? {

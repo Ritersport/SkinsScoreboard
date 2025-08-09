@@ -1,6 +1,6 @@
 package com.ritesrport.skinsscoreboard.domain
 
-import com.ritesrport.skinsscoreboard.domain.ResultsComparator.MATCH_COUNT
+import com.ritesrport.skinsscoreboard.domain.GameConstants.MATCH_COUNT
 
 data class PlayerResults(val strokes: Array<Int> = Array(MATCH_COUNT, {0})) {
     override fun equals(other: Any?): Boolean {

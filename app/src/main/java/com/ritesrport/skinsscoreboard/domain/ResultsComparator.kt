@@ -1,17 +1,14 @@
 package com.ritesrport.skinsscoreboard.domain
 
+import com.ritesrport.skinsscoreboard.domain.GameConstants.MATCH_COUNT
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 
 object ResultsComparator {
 
-//    const val MATCH_COUNT = 18 //TODO вынести куда-то, использовать везде
-    const val MATCH_COUNT = 3
-
-
     /**
-     * возвращает null, если ничья - TODO
+     * @return null, если ничья
      */
     fun getWinner(results: Map<Player, PlayerResults>): Player? {
         val playerToScore = results.keys.associateWith { 0 }.toMutableMap()
@@ -23,7 +20,7 @@ object ResultsComparator {
                 playerToScore[matchWinner] = playerToScore[matchWinner]!!.plus(drawCounter + 1)
                 drawCounter = 0
             } else {
-                drawCounter = drawCounter++
+                drawCounter = drawCounter + 1
             }
         }
 
