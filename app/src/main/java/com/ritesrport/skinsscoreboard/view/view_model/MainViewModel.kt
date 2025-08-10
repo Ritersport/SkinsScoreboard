@@ -1,13 +1,12 @@
 package com.ritesrport.skinsscoreboard.view.view_model
 
 import androidx.lifecycle.ViewModel
-import com.ritesrport.skinsscoreboard.R
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.domain.HoleInputIntent
 import com.ritesrport.skinsscoreboard.domain.HoleInputRepository
 import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 import com.ritesrport.skinsscoreboard.domain.ResultsComparator
-import com.ritesrport.skinsscoreboard.view.states.GreetingState
+import com.ritesrport.skinsscoreboard.view.composables.GameResults
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +22,7 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
         )
     }
 
-    private val _gameResultState = MutableStateFlow(GameResultState(null))
+    private val _gameResultState: MutableStateFlow<GameResultState> = MutableStateFlow(GameResultState.InProgress)
 
     val holeInputState: StateFlow<HoleInputState> = _holeInputState
     val gameResultState: StateFlow<GameResultState> = _gameResultState
@@ -64,10 +63,17 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
         val player2 = repository.getNextPlayer(player1) ?: return
         val player1Result = repository.getResults(1) ?: return
         val player2Result = repository.getResults(2) ?: return //TODO - обработка ошибок
-        val winner =
-            ResultsComparator.getWinner(mapOf(player1 to player1Result, player2 to player2Result))
+        val scores =
+            ResultsComparator.getScores(mapOf(player1 to player1Result, player2 to player2Result))
+        val winner = ResultsComparator.getWinner(scores)
+        val result = if (winner == null) {
+            GameResultState.Draw(scores[0], scores[1])
+        } else {
+            GameResultState.Win(winner.player, scores[0], scores[1])
+        }
+
         _holeInputState.update { it.copy(isGameOver = true) }
-        _gameResultState.update { GameResultState(winner) }
+        _gameResultState.update { result }
     }
 
     private fun onNewGame() {
@@ -79,7 +85,7 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
                     player = repository.getFirstPlayer()
                 )
             }
-            _gameResultState.update { GameResultState(null) }
+            _gameResultState.update { GameResultState.InProgress }
         }
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ritesrport.skinsscoreboard.domain.HoleInputIntent
+import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
 @Composable
@@ -36,18 +37,31 @@ fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = if (state.winner == null) {
-                    "Draw!"
+            when (val result = state) {
+                is GameResultState.Draw -> {
+                    Text(
+                        text = "Draw!",
+                        fontSize = 24.sp,
+                        modifier = modifier.padding(8.dp)
+                    )
+                    Text("${result.player1Score.player.name}: ${result.player1Score.score}")
+                    Text("${result.player2Score.player.name}: ${result.player2Score.score}")
                 }
-                else {
-                    "Winner ${state.winner?.player?.name}!!!"
-                },
-                fontSize = 24.sp,
-                modifier = modifier.padding(8.dp)
-            )
 
+                GameResultState.InProgress -> {
+                    viewModel.processIntent(HoleInputIntent.NewGame)
+                }
 
+                is GameResultState.Win -> {
+                    Text(
+                        text = "Winner ${result.winner.name}!!!",
+                        fontSize = 24.sp,
+                        modifier = modifier.padding(8.dp)
+                    )
+                    Text("${result.player1Score.player.name}: ${result.player1Score.score}")
+                    Text("${result.player2Score.player.name}: ${result.player2Score.score}")
+                }
+            }
             OutlinedButton(onClick = {
                 viewModel.processIntent(HoleInputIntent.NewGame)
             }) {
