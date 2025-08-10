@@ -1,9 +1,12 @@
 package com.ritesrport.skinsscoreboard.view.composables
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -22,11 +25,14 @@ import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.gameResultState.collectAsState()
     Surface(
-        color = MaterialTheme.colorScheme.background,
-        modifier = modifier.fillMaxSize()
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
         Column(
-            modifier = Modifier.padding(vertical = 20.dp),
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .wrapContentHeight()
+                .padding(12.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

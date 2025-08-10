@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ritesrport.skinsscoreboard.di.HoleInputRepositoryProvider
 import com.ritesrport.skinsscoreboard.ui.theme.SkinsScoreboardTheme
-import com.ritesrport.skinsscoreboard.view.composables.Game
+import com.ritesrport.skinsscoreboard.view.composables.Greeting
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
-        Game(
+        Greeting(
             MainViewModel(HoleInputRepositoryProvider.provideRepository()),
             modifier = Modifier.padding(innerPadding)
         )
