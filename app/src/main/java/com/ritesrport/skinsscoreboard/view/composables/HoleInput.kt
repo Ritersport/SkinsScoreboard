@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -37,40 +38,45 @@ fun HoleInput(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .wrapContentHeight()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = "Hole no. ${state.holeData.holeNumber}",
-                fontSize = 24.sp,
-            )
-            Text("Par: ${state.holeData.par}")
-            Text(
-                text = state.player.name,
-                modifier = modifier.padding(vertical = 8.dp)
-            )
-            OutlinedTextField(
-                textFieldValue,
-                {
-                    textFieldValue = it
-                    val intValue = it.toIntOrNull()
-                    okButtonEnabled = intValue in 1..1000
-                },
-                placeholder = { Text("Enter the number of strokes") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            )
-            OutlinedButton(enabled = okButtonEnabled, onClick = {
-                viewModel.processIntent(HoleInputIntent.CompletePlayerInput(textFieldValue.toInt()))
-                textFieldValue = ""
-                okButtonEnabled = false
-            }) {
-                Text("OK")
+        val holeInputState = state
+        if (holeInputState != null) {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .wrapContentHeight()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "Hole no. ${holeInputState.holeData.holeNumber}",
+                    fontSize = 24.sp,
+                )
+                Text("Par: ${holeInputState.holeData.par}")
+                Text(
+                    text = holeInputState.player.name,
+                    modifier = modifier.padding(vertical = 8.dp)
+                )
+                OutlinedTextField(
+                    textFieldValue,
+                    {
+                        textFieldValue = it
+                        val intValue = it.toIntOrNull()
+                        okButtonEnabled = intValue in 1..1000
+                    },
+                    placeholder = { Text("Enter the number of strokes") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+                OutlinedButton(enabled = okButtonEnabled, onClick = {
+                    viewModel.processIntent(HoleInputIntent.CompletePlayerInput(textFieldValue.toInt()))
+                    textFieldValue = ""
+                    okButtonEnabled = false
+                }) {
+                    Text("OK")
+                }
             }
+        } else {
+            CircularProgressIndicator()
         }
     }
 }

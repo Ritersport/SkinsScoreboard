@@ -1,6 +1,7 @@
 package com.ritesrport.skinsscoreboard.view.view_model
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
 import com.ritesrport.skinsscoreboard.domain.repository.HoleRepository
@@ -11,26 +12,29 @@ import com.ritesrport.skinsscoreboard.domain.repository.ResultsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val holeRepository: HoleRepository,
     private val playerRepository: PlayerRepository,
     private val resultsRepository: ResultsRepository
     ) : ViewModel() {
-    private val _holeInputState = runBlocking {
-        MutableStateFlow(
-            HoleInputState(
-                holeData = holeRepository.getFirstHole(),
-                player = playerRepository.getFirstPlayer(),
-            )
-        )
-    }
-
+    private val _holeInputState: MutableStateFlow<HoleInputState?> = MutableStateFlow(null)
     private val _gameResultState: MutableStateFlow<GameResultState> = MutableStateFlow(GameResultState.InProgress)
 
-    val holeInputState: StateFlow<HoleInputState> = _holeInputState
+    val holeInputState: StateFlow<HoleInputState?> = _holeInputState
     val gameResultState: StateFlow<GameResultState> = _gameResultState
+
+    init {
+        viewModelScope.launch {
+            val firstHole = holeRepository.getFirstHole()
+            val firstPlayer = playerRepository.getFirstPlayer()
+            _holeInputState.value = HoleInputState(
+                holeData = firstHole,
+                player = firstPlayer
+            )
+        }
+    }
 
     fun processIntent(intent: HoleInputIntent) {
         when (intent) {
@@ -41,23 +45,30 @@ class MainViewModel(
     }
 
     private fun onCompletePlayerInput(strokesNumber: Int) {
-        runBlocking {
+        viewModelScope.launch {
             val data = holeInputState.value
-            resultsRepository.saveNewResult(data.player, data.holeData.holeNumber, strokesNumber)
-            val nextPlayer = playerRepository.getNextPlayer(holeInputState.value.player)
-            if (nextPlayer != null) {
-                _holeInputState.update { it.copy(player = nextPlayer) }
-            } else {
-                val nextHole = holeRepository.getHoleData(holeInputState.value.holeData.holeNumber + 1)
-                if (nextHole != null) {
-                    _holeInputState.update {
-                        HoleInputState(
-                            holeData = nextHole,
-                            player = playerRepository.getFirstPlayer()
-                        )
-                    }
+            if (data != null) {
+                resultsRepository.saveNewResult(
+                    data.player,
+                    data.holeData.holeNumber,
+                    strokesNumber
+                )
+
+                val nextPlayer = playerRepository.getNextPlayer(data.player)
+                if (nextPlayer != null) {
+                    _holeInputState.update { it?.copy(player = nextPlayer) }
                 } else {
-                    setWinner()
+                    val nextHole = holeRepository.getHoleData(data.holeData.holeNumber + 1)
+                    if (nextHole != null) {
+                        _holeInputState.update {
+                            HoleInputState(
+                                holeData = nextHole,
+                                player = playerRepository.getFirstPlayer()
+                            )
+                        }
+                    } else {
+                        setWinner()
+                    }
                 }
             }
         }
@@ -81,7 +92,7 @@ class MainViewModel(
     }
 
     private fun onNewGame() {
-        runBlocking {
+        viewModelScope.launch {
             resultsRepository.clearResults()
             playerRepository.clearPlayers()
             _holeInputState.update {
