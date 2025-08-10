@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ritesrport.skinsscoreboard.domain.HoleInputIntent
+import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
 @Composable

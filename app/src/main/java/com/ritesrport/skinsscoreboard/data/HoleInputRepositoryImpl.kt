@@ -1,10 +1,10 @@
 package com.ritesrport.skinsscoreboard.data
 
 import com.ritesrport.skinsscoreboard.domain.GameConstants.HOLE_PARS
-import com.ritesrport.skinsscoreboard.domain.HoleData
+import com.ritesrport.skinsscoreboard.domain.entity.HoleData
 import com.ritesrport.skinsscoreboard.domain.HoleInputRepository
-import com.ritesrport.skinsscoreboard.domain.Player
-import com.ritesrport.skinsscoreboard.domain.PlayerResults
+import com.ritesrport.skinsscoreboard.domain.entity.Player
+import com.ritesrport.skinsscoreboard.domain.entity.PlayerResults
 
 class HoleInputRepositoryImpl : HoleInputRepository {
 

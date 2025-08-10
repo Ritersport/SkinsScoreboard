@@ -1,5 +1,9 @@
 package com.ritesrport.skinsscoreboard.domain
 
+import com.ritesrport.skinsscoreboard.domain.entity.HoleData
+import com.ritesrport.skinsscoreboard.domain.entity.Player
+import com.ritesrport.skinsscoreboard.domain.entity.PlayerResults
+
 interface HoleInputRepository {
     suspend fun getHoleData(holeNumber: Int): HoleData?
     suspend fun getFirstHole(): HoleData

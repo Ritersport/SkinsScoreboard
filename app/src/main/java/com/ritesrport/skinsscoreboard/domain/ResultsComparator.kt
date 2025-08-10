@@ -1,6 +1,10 @@
 package com.ritesrport.skinsscoreboard.domain
 
 import com.ritesrport.skinsscoreboard.domain.GameConstants.MATCH_COUNT
+import com.ritesrport.skinsscoreboard.domain.entity.MatchResult
+import com.ritesrport.skinsscoreboard.domain.entity.Player
+import com.ritesrport.skinsscoreboard.domain.entity.PlayerResults
+import com.ritesrport.skinsscoreboard.domain.entity.PlayerScore
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator

@@ -1,4 +1,4 @@
-package com.ritesrport.skinsscoreboard.domain
+package com.ritesrport.skinsscoreboard.domain.entity
 
 data class MatchResult(
     val round: Int,

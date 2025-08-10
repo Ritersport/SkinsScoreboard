@@ -1,8 +1,8 @@
-package com.ritesrport.skinsscoreboard.domain
+package com.ritesrport.skinsscoreboard.domain.entity
 
-import com.ritesrport.skinsscoreboard.domain.GameConstants.MATCH_COUNT
+import com.ritesrport.skinsscoreboard.domain.GameConstants
 
-data class PlayerResults(val strokes: Array<Int> = Array(MATCH_COUNT, {0})) {
+data class PlayerResults(val strokes: Array<Int> = Array(GameConstants.MATCH_COUNT, {0})) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

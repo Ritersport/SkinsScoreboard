@@ -1,7 +1,7 @@
 package com.ritesrport.skinsscoreboard.view.states
 
-import com.ritesrport.skinsscoreboard.domain.HoleData
-import com.ritesrport.skinsscoreboard.domain.Player
+import com.ritesrport.skinsscoreboard.domain.entity.HoleData
+import com.ritesrport.skinsscoreboard.domain.entity.Player
 
 data class HoleInputState(
     val holeData: HoleData,

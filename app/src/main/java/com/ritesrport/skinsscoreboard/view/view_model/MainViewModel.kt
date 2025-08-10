@@ -2,7 +2,7 @@ package com.ritesrport.skinsscoreboard.view.view_model
 
 import androidx.lifecycle.ViewModel
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
-import com.ritesrport.skinsscoreboard.domain.HoleInputIntent
+import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
 import com.ritesrport.skinsscoreboard.domain.HoleInputRepository
 import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 import com.ritesrport.skinsscoreboard.domain.ResultsComparator

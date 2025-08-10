@@ -1,4 +1,4 @@
-package com.ritesrport.skinsscoreboard.domain
+package com.ritesrport.skinsscoreboard.view.intents
 
 sealed interface HoleInputIntent {
     data class PutPlayerName(val playerNumber: Int, val name: String) : HoleInputIntent
