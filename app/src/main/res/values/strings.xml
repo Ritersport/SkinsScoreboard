@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">SkinsScoreboard</string>
-    <string name="greeting">Приветствую!
+    <string name="greeting">Greetings!
 
-Это приложение поможет определить победителя в партии в Гольф для двух игроков. Используются правила Skins.
+This app will help you determine the winner of a two-player round of Golf. The Skins rules are used.
 
-Последовательно введите количество ударов по каждой лунке для каждого из игроков. Будьте осторожны! После ввода их нельзя отредактировать.
+Enter the number of strokes on each hole for each player sequentially. Be careful! You cannot edit them after entering.
 
-Мы считаем, что более 1000 ударов по одной лунке - невозможно, поэтому не дадим вам ввести настолько большое число
+We believe that it is impossible to put more than 1,000 strokes on one hole, so we will not let you enter such a large number.
 
-Желаем приятной игры!</string>
+We wish you a pleasant game!</string>
 </resources>

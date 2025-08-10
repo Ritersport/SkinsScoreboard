@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.ritesrport.skinsscoreboard.R
+import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
 @Composable
@@ -22,8 +23,8 @@ fun Game(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             contentScale = ContentScale.Crop,
             modifier = modifier.fillMaxHeight()
         )
-        val state by viewModel.holeInputState.collectAsState()
-        if (state.isGameOver) {
+        val resultState by viewModel.gameResultState.collectAsState()
+        if (resultState !is GameResultState.InProgress) {
             GameResults(viewModel, modifier)
         } else {
             HoleInput(viewModel, modifier)

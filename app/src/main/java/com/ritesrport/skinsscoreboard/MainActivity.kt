@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.ritesrport.skinsscoreboard.di.HoleInputRepositoryProvider
+import com.ritesrport.skinsscoreboard.di.HoleRepositoryProvider
+import com.ritesrport.skinsscoreboard.di.PlayerRepositoryProvider
+import com.ritesrport.skinsscoreboard.di.ResultsRepositoryProvider
 import com.ritesrport.skinsscoreboard.ui.theme.SkinsScoreboardTheme
 import com.ritesrport.skinsscoreboard.view.composables.Greeting
-import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ritesrport.skinsscoreboard.view.view_model.MyViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +33,11 @@ class MainActivity : ComponentActivity() {
 fun App(modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Greeting(
-            MainViewModel(HoleInputRepositoryProvider.provideRepository()),
+            viewModel = viewModel(factory = MyViewModelFactory(
+                HoleRepositoryProvider.provideRepository(),
+                PlayerRepositoryProvider.provideRepository(),
+                ResultsRepositoryProvider.provideRepository()
+            )),
             modifier = Modifier.padding(innerPadding)
         )
     }

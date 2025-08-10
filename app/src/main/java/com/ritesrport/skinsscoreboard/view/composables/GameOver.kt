@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +28,8 @@ fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.gameResultState.collectAsState()
     Surface(
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        modifier = modifier.widthIn(min = 300.dp)
     ) {
         Column(
             modifier = Modifier

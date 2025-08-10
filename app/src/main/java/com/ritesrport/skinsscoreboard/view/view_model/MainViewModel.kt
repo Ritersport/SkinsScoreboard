@@ -3,21 +3,26 @@ package com.ritesrport.skinsscoreboard.view.view_model
 import androidx.lifecycle.ViewModel
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
-import com.ritesrport.skinsscoreboard.domain.HoleInputRepository
+import com.ritesrport.skinsscoreboard.domain.repository.HoleRepository
 import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 import com.ritesrport.skinsscoreboard.domain.ResultsComparator
-import com.ritesrport.skinsscoreboard.view.composables.GameResults
+import com.ritesrport.skinsscoreboard.domain.repository.PlayerRepository
+import com.ritesrport.skinsscoreboard.domain.repository.ResultsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 
-class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
+class MainViewModel(
+    private val holeRepository: HoleRepository,
+    private val playerRepository: PlayerRepository,
+    private val resultsRepository: ResultsRepository
+    ) : ViewModel() {
     private val _holeInputState = runBlocking {
         MutableStateFlow(
             HoleInputState(
-                holeData = repository.getFirstHole(),
-                player = repository.getFirstPlayer(),
+                holeData = holeRepository.getFirstHole(),
+                player = playerRepository.getFirstPlayer(),
             )
         )
     }
@@ -38,17 +43,17 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
     private fun onCompletePlayerInput(strokesNumber: Int) {
         runBlocking {
             val data = holeInputState.value
-            repository.saveNewResult(data.player, data.holeData.holeNumber, strokesNumber)
-            val nextPlayer = repository.getNextPlayer(holeInputState.value.player)
+            resultsRepository.saveNewResult(data.player, data.holeData.holeNumber, strokesNumber)
+            val nextPlayer = playerRepository.getNextPlayer(holeInputState.value.player)
             if (nextPlayer != null) {
                 _holeInputState.update { it.copy(player = nextPlayer) }
             } else {
-                val nextHole = repository.getHoleData(holeInputState.value.holeData.holeNumber + 1)
+                val nextHole = holeRepository.getHoleData(holeInputState.value.holeData.holeNumber + 1)
                 if (nextHole != null) {
                     _holeInputState.update {
                         HoleInputState(
                             holeData = nextHole,
-                            player = repository.getFirstPlayer()
+                            player = playerRepository.getFirstPlayer()
                         )
                     }
                 } else {
@@ -59,10 +64,10 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
     }
 
     private suspend fun setWinner() {
-        val player1 = repository.getFirstPlayer()
-        val player2 = repository.getNextPlayer(player1) ?: return
-        val player1Result = repository.getResults(1) ?: return
-        val player2Result = repository.getResults(2) ?: return //TODO - обработка ошибок
+        val player1 = playerRepository.getFirstPlayer()
+        val player2 = playerRepository.getNextPlayer(player1) ?: return
+        val player1Result = resultsRepository.getResults(1) ?: return
+        val player2Result = resultsRepository.getResults(2) ?: return //TODO - обработка ошибок
         val scores =
             ResultsComparator.getScores(mapOf(player1 to player1Result, player2 to player2Result))
         val winner = ResultsComparator.getWinner(scores)
@@ -72,17 +77,17 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
             GameResultState.Win(winner.player, scores[0], scores[1])
         }
 
-        _holeInputState.update { it.copy(isGameOver = true) }
         _gameResultState.update { result }
     }
 
     private fun onNewGame() {
         runBlocking {
-            repository.clearResults()
+            resultsRepository.clearResults()
+            playerRepository.clearPlayers()
             _holeInputState.update {
                 HoleInputState(
-                    holeData = repository.getFirstHole(),
-                    player = repository.getFirstPlayer()
+                    holeData = holeRepository.getFirstHole(),
+                    player = playerRepository.getFirstPlayer()
                 )
             }
             _gameResultState.update { GameResultState.InProgress }
