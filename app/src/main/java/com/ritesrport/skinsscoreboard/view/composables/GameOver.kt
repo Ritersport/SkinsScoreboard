@@ -63,6 +63,12 @@ fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     Text("${result.player1Score.player.name}: ${result.player1Score.score}")
                     Text("${result.player2Score.player.name}: ${result.player2Score.score}")
                 }
+
+                is GameResultState.Error -> Text(
+                    text = "Something went wrong: ${result.msg}",
+                    fontSize = 24.sp,
+                    modifier = modifier.padding(8.dp)
+                )
             }
             OutlinedButton(onClick = {
                 viewModel.processIntent(HoleInputIntent.NewGame)

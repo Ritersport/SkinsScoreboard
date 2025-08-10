@@ -6,14 +6,6 @@ import com.ritesrport.skinsscoreboard.domain.entity.Player
 class PlayerRepositoryImpl : PlayerRepository {
     private var playerNames: Array<String> = Array(2) { getDefaultPlayerName(it) }
 
-    override suspend fun getPlayerName(number: Int): String? {
-        return if (number in 1..playerNames.size) {
-            playerNames[number - 1]
-        } else {
-            null
-        }
-    }
-
     override suspend fun putPlayersNumber(number: Int) {
         if (validatePlayersNumber(number)) {
             playerNames = Array(number) { getDefaultPlayerName(it) }
