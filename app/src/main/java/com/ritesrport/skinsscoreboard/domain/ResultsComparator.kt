@@ -10,7 +10,7 @@ object ResultsComparator {
     /**
      * @return null, если ничья
      */
-    fun getWinner(results: Map<Player, PlayerResults>): Player? {
+    fun getWinner(results: Map<Player, PlayerResults>): PlayerScore? {
         val playerToScore = results.keys.associateWith { 0 }.toMutableMap()
 
         var drawCounter = 0 //ничья
@@ -28,7 +28,8 @@ object ResultsComparator {
         val nonZeroScore = playerToScore.values.filter { it != 0 }
         if (nonZeroScore.size != nonZeroScore.toSet().size) return null //возвращаем null, если есть ненеулевые
 
-        return playerToScore.maxByOrNull { it.value }?.key
+        val winner = playerToScore.maxByOrNull { it.value }
+        return winner?.let { PlayerScore(it.key, it.value) }
     }
 
 

@@ -56,17 +56,15 @@ class MainViewModel(private val repository: HoleInputRepository) : ViewModel() {
         }
     }
 
-    private fun setWinner()
+    private suspend fun setWinner()
     {
-        runBlocking {
-            val player1 = repository.getFirstPlayer()
-            val player2 = repository.getNextPlayer(player1) ?: return@runBlocking
-            val player1Result = repository.getResults(1) ?: return@runBlocking
-            val player2Result = repository.getResults(2) ?: return@runBlocking
-            val winner = ResultsComparator.getWinner(mapOf(player1 to player1Result, player2 to player2Result))
-            _holeInputState.update { it.copy(isGameOver = true) }
-            _gameResultState.update { GameResultState(winner) }
-        }
+        val player1 = repository.getFirstPlayer()
+        val player2 = repository.getNextPlayer(player1) ?: return
+        val player1Result = repository.getResults(1) ?: return
+        val player2Result = repository.getResults(2) ?: return //TODO - обработка ошибок
+        val winner = ResultsComparator.getWinner(mapOf(player1 to player1Result, player2 to player2Result))
+        _holeInputState.update { it.copy(isGameOver = true) }
+        _gameResultState.update { GameResultState(winner) }
     }
 
     private fun onNewGame()

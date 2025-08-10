@@ -9,14 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
-import com.ritesrport.skinsscoreboard.data.HoleInputRepositoryImpl
 import com.ritesrport.skinsscoreboard.di.HoleInputRepositoryProvider
 import com.ritesrport.skinsscoreboard.ui.theme.SkinsScoreboardTheme
 import com.ritesrport.skinsscoreboard.view.composables.Game
-import com.ritesrport.skinsscoreboard.view.composables.HoleInput
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
-import com.ritesrport.skinsscoreboard.view.view_model.ViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

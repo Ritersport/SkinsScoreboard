@@ -35,7 +35,7 @@ fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     "Draw!"
                 }
                 else {
-                    "Winner ${state.winner?.name}!!!"
+                    "Winner ${state.winner?.player?.name}!!!"
                 },
                 fontSize = 24.sp,
                 modifier = modifier.padding(8.dp)
