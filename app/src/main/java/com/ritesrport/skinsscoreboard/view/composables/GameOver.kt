@@ -13,19 +13,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
-import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
 @Composable
-fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
-    val state by viewModel.gameResultState.collectAsState()
+fun GameResults(
+    gameResultState: GameResultState,
+    onNewGameClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
@@ -39,40 +38,38 @@ fun GameResults(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            when (val result = state) {
+            when (gameResultState) {
                 is GameResultState.Draw -> {
                     Text(
                         text = "Draw!",
                         fontSize = 24.sp,
                         modifier = modifier.padding(8.dp)
                     )
-                    Text("${result.player1Score.player.name}: ${result.player1Score.score}")
-                    Text("${result.player2Score.player.name}: ${result.player2Score.score}")
+                    Text("${gameResultState.player1Score.player.name}: ${gameResultState.player1Score.score}")
+                    Text("${gameResultState.player2Score.player.name}: ${gameResultState.player2Score.score}")
                 }
 
                 GameResultState.InProgress -> {
-                    viewModel.processIntent(HoleInputIntent.NewGame)
+                    onNewGameClicked
                 }
 
                 is GameResultState.Win -> {
                     Text(
-                        text = "Winner ${result.winner.name}!!!",
+                        text = "Winner ${gameResultState.winner.name}!!!",
                         fontSize = 24.sp,
                         modifier = modifier.padding(8.dp)
                     )
-                    Text("${result.player1Score.player.name}: ${result.player1Score.score}")
-                    Text("${result.player2Score.player.name}: ${result.player2Score.score}")
+                    Text("${gameResultState.player1Score.player.name}: ${gameResultState.player1Score.score}")
+                    Text("${gameResultState.player2Score.player.name}: ${gameResultState.player2Score.score}")
                 }
 
                 is GameResultState.Error -> Text(
-                    text = "Something went wrong: ${result.msg}",
+                    text = "Something went wrong: ${gameResultState.msg}",
                     fontSize = 24.sp,
                     modifier = modifier.padding(8.dp)
                 )
             }
-            OutlinedButton(onClick = {
-                viewModel.processIntent(HoleInputIntent.NewGame)
-            }) {
+            OutlinedButton(onClick = onNewGameClicked) {
                 Text("New game")
             }
         }

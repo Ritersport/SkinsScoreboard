@@ -15,7 +15,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,12 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
-import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
+import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 
 @Composable
-fun HoleInput(viewModel: MainViewModel, modifier: Modifier = Modifier) {
-    val state by viewModel.holeInputState.collectAsState()
+fun HoleInput(
+    holeInputState: HoleInputState?,
+    onCompletePlayerInput: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var okButtonEnabled by rememberSaveable { mutableStateOf(false) }
     var textFieldValue by rememberSaveable { mutableStateOf("") }
 
@@ -38,7 +39,6 @@ fun HoleInput(viewModel: MainViewModel, modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
-        val holeInputState = state
         if (holeInputState != null) {
             Column(
                 modifier = Modifier
@@ -68,7 +68,7 @@ fun HoleInput(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
                 OutlinedButton(enabled = okButtonEnabled, onClick = {
-                    viewModel.processIntent(HoleInputIntent.CompletePlayerInput(textFieldValue.toInt()))
+                    onCompletePlayerInput(textFieldValue.toInt())
                     textFieldValue = ""
                     okButtonEnabled = false
                 }) {
