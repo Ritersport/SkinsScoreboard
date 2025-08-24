@@ -9,6 +9,7 @@ import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 import com.ritesrport.skinsscoreboard.domain.ResultsComparator
 import com.ritesrport.skinsscoreboard.domain.repository.PlayerRepository
 import com.ritesrport.skinsscoreboard.domain.repository.ResultsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +28,7 @@ class MainViewModel(
     val gameResultState: StateFlow<GameResultState> = _gameResultState
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val firstHole = holeRepository.getFirstHole()
             val firstPlayer = playerRepository.getFirstPlayer()
             _holeInputState.value = HoleInputState(
@@ -46,7 +47,7 @@ class MainViewModel(
     }
 
     private fun onCompletePlayerInput(strokesNumber: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val data = holeInputState.value
             if (data != null) {
                 resultsRepository.saveNewResult(
@@ -103,7 +104,7 @@ class MainViewModel(
     }
 
     private fun onNewGame() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             resultsRepository.clearResults()
             playerRepository.clearPlayers()
             _holeInputState.update {
