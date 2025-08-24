@@ -40,13 +40,7 @@ fun GameResults(
         ) {
             when (gameResultState) {
                 is GameResultState.Draw -> {
-                    Text(
-                        text = "Draw!",
-                        fontSize = 24.sp,
-                        modifier = modifier.padding(8.dp)
-                    )
-                    Text("${gameResultState.player1Score.player.name}: ${gameResultState.player1Score.score}")
-                    Text("${gameResultState.player2Score.player.name}: ${gameResultState.player2Score.score}")
+                    Draw(gameResultState, modifier)
                 }
 
                 GameResultState.InProgress -> {
@@ -54,13 +48,7 @@ fun GameResults(
                 }
 
                 is GameResultState.Win -> {
-                    Text(
-                        text = "Winner ${gameResultState.winner.name}!!!",
-                        fontSize = 24.sp,
-                        modifier = modifier.padding(8.dp)
-                    )
-                    Text("${gameResultState.player1Score.player.name}: ${gameResultState.player1Score.score}")
-                    Text("${gameResultState.player2Score.player.name}: ${gameResultState.player2Score.score}")
+                    Winner(gameResultState, modifier)
                 }
 
                 is GameResultState.Error -> Text(
@@ -74,4 +62,32 @@ fun GameResults(
             }
         }
     }
+}
+
+@Composable
+fun Winner(
+    winResultState: GameResultState.Win,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "Winner ${winResultState.winner.name}!!!",
+        fontSize = 24.sp,
+        modifier = modifier.padding(8.dp)
+    )
+    Text("${winResultState.player1Score.player.name}: ${winResultState.player1Score.score}")
+    Text("${winResultState.player2Score.player.name}: ${winResultState.player2Score.score}")
+}
+
+@Composable
+fun Draw(
+    drawResultState: GameResultState.Draw,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "Draw!",
+        fontSize = 24.sp,
+        modifier = modifier.padding(8.dp)
+    )
+    Text("${drawResultState.player1Score.player.name}: ${drawResultState.player1Score.score}")
+    Text("${drawResultState.player2Score.player.name}: ${drawResultState.player2Score.score}")
 }
