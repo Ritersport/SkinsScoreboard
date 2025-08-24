@@ -6,7 +6,7 @@ This app will help you determine the winner of a two-player round of Golf. The S
 
 Enter the number of strokes on each hole for each player sequentially. Be careful! You cannot edit them after entering.
 
-We believe that it is impossible to put more than 1,000 strokes on one hole, so we will not let you enter such a large number.
+We believe that it is impossible to put more than 100 strokes on one hole, so we will not let you enter such a large number.
 
 We wish you a pleasant game!</string>
 </resources>

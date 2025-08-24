@@ -9,6 +9,7 @@ import com.ritesrport.skinsscoreboard.view.states.HoleInputState
 import com.ritesrport.skinsscoreboard.domain.ResultsComparator
 import com.ritesrport.skinsscoreboard.domain.repository.PlayerRepository
 import com.ritesrport.skinsscoreboard.domain.repository.ResultsRepository
+import com.ritesrport.skinsscoreboard.view.states.HoleInputValidationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +33,7 @@ class MainViewModel(
             val firstHole = holeRepository.getFirstHole()
             val firstPlayer = playerRepository.getFirstPlayer()
             _holeInputState.value = HoleInputState(
+                inputValidation = HoleInputValidationState.Invalid,
                 holeData = firstHole,
                 player = firstPlayer
             )
@@ -40,30 +42,55 @@ class MainViewModel(
 
     fun processIntent(intent: HoleInputIntent) {
         when (intent) {
-            is HoleInputIntent.CompletePlayerInput -> onCompletePlayerInput(intent.enteredNumber)
+            is HoleInputIntent.CompletePlayerInput -> onCompletePlayerInput()
             is HoleInputIntent.PutPlayerName -> TODO()
             is HoleInputIntent.NewGame -> onNewGame()
+            is HoleInputIntent.UserChangedStrokesInput -> onUserEnteredStrokes(intent.input)
         }
     }
 
-    private fun onCompletePlayerInput(strokesNumber: Int) {
+    private fun onUserEnteredStrokes(input: String) {
+        val intValue = input.toIntOrNull()
+        val isValid = intValue in 1..100
+        _holeInputState.update {
+            it?.copy(
+                if (isValid || input.isEmpty()) input else it.holeInput,
+                if (isValid) {
+                    HoleInputValidationState.Valid(intValue!!)
+                } else {
+                    if (input.isEmpty()) {
+                        HoleInputValidationState.Invalid
+                    } else {
+                        it.inputValidation
+                    }
+                }
+            )
+        }
+    }
+
+    private fun onCompletePlayerInput() {
         viewModelScope.launch(Dispatchers.IO) {
             val data = holeInputState.value
-            if (data != null) {
+            if (data?.inputValidation is HoleInputValidationState.Valid) {
                 resultsRepository.saveNewResult(
-                    data.player,
-                    data.holeData.holeNumber,
-                    strokesNumber
+                    data.player, data.holeData.holeNumber, data.inputValidation.validatedInput
                 )
 
                 val nextPlayer = playerRepository.getNextPlayer(data.player)
                 if (nextPlayer != null) {
-                    _holeInputState.update { it?.copy(player = nextPlayer) }
+                    _holeInputState.update {
+                        it?.copy(
+                            holeInput = "",
+                            inputValidation = HoleInputValidationState.Invalid,
+                            player = nextPlayer
+                        )
+                    }
                 } else {
                     val nextHole = holeRepository.getHoleData(data.holeData.holeNumber + 1)
                     if (nextHole != null) {
                         _holeInputState.update {
                             HoleInputState(
+                                inputValidation = HoleInputValidationState.Invalid,
                                 holeData = nextHole,
                                 player = playerRepository.getFirstPlayer()
                             )
@@ -85,13 +112,11 @@ class MainViewModel(
         val result = if (player2 == null || player1Result == null || player2Result == null) {
             GameResultState.Error("Results not found")
         } else {
-            val scores =
-                ResultsComparator.getScores(
-                    mapOf(
-                        player1 to player1Result,
-                        player2 to player2Result
-                    )
+            val scores = ResultsComparator.getScores(
+                mapOf(
+                    player1 to player1Result, player2 to player2Result
                 )
+            )
             val winner = ResultsComparator.getWinner(scores)
             if (winner == null) {
                 GameResultState.Draw(scores[0], scores[1])
@@ -109,6 +134,7 @@ class MainViewModel(
             playerRepository.clearPlayers()
             _holeInputState.update {
                 HoleInputState(
+                    inputValidation = HoleInputValidationState.Invalid,
                     holeData = holeRepository.getFirstHole(),
                     player = playerRepository.getFirstPlayer()
                 )

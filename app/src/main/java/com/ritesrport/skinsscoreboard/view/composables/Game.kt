@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.ritesrport.skinsscoreboard.R
-import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent
+import com.ritesrport.skinsscoreboard.view.intents.HoleInputIntent.*
 import com.ritesrport.skinsscoreboard.view.states.GameResultState
 import com.ritesrport.skinsscoreboard.view.view_model.MainViewModel
 
@@ -25,18 +25,23 @@ fun Game(viewModel: MainViewModel, modifier: Modifier = Modifier) {
             modifier = modifier.fillMaxHeight()
         )
         val resultState by viewModel.gameResultState.collectAsState()
-        if (resultState !is GameResultState.InProgress) {
-            GameResults(
-                resultState,
-                { viewModel.processIntent(HoleInputIntent.NewGame) },
-                modifier
-            )
-        } else {
-            HoleInput(
-                viewModel.holeInputState.collectAsState().value,
-                {viewModel.processIntent(HoleInputIntent.CompletePlayerInput(it)) },
-                modifier
-            )
+        when (resultState) {
+            is GameResultState.Win, is GameResultState.Draw, is GameResultState.Error -> {
+                GameResults(
+                    resultState,
+                    { viewModel.processIntent(NewGame) },
+                    modifier
+                )
+            }
+
+            is GameResultState.InProgress -> {
+                HoleInput(
+                    viewModel.holeInputState.collectAsState().value,
+                    { viewModel.processIntent(UserChangedStrokesInput(it))},
+                    { viewModel.processIntent(CompletePlayerInput) },
+                    modifier
+                )
+            }
         }
     }
 }

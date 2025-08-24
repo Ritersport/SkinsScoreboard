@@ -15,26 +15,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ritesrport.skinsscoreboard.view.states.HoleInputState
+import com.ritesrport.skinsscoreboard.view.states.HoleInputValidationState
 
 @Composable
 fun HoleInput(
     holeInputState: HoleInputState?,
-    onCompletePlayerInput: (Int) -> Unit,
+    onHoleInputChanged: (String) -> Unit,
+    onCompletePlayerInput: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var okButtonEnabled by rememberSaveable { mutableStateOf(false) }
-    var textFieldValue by rememberSaveable { mutableStateOf("") }
-
     Surface(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
@@ -58,20 +53,14 @@ fun HoleInput(
                     modifier = modifier.padding(vertical = 8.dp)
                 )
                 OutlinedTextField(
-                    textFieldValue,
-                    {
-                        textFieldValue = it
-                        val intValue = it.toIntOrNull()
-                        okButtonEnabled = intValue in 1..1000
-                    },
+                    holeInputState.holeInput,
+                    onHoleInputChanged,
                     placeholder = { Text("Enter the number of strokes") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
-                OutlinedButton(enabled = okButtonEnabled, onClick = {
-                    onCompletePlayerInput(textFieldValue.toInt())
-                    textFieldValue = ""
-                    okButtonEnabled = false
-                }) {
+                val enabled = holeInputState.inputValidation is HoleInputValidationState.Valid
+
+                OutlinedButton(enabled = enabled, onClick = onCompletePlayerInput) {
                     Text("OK")
                 }
             }
