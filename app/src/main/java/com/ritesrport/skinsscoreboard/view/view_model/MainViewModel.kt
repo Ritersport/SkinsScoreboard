@@ -29,7 +29,7 @@ class MainViewModel(
     val gameResultState: StateFlow<GameResultState> = _gameResultState
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val firstHole = holeRepository.getFirstHole()
             val firstPlayer = playerRepository.getFirstPlayer()
             _holeInputState.value = HoleInputState(
@@ -69,7 +69,7 @@ class MainViewModel(
     }
 
     private fun onCompletePlayerInput() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val data = holeInputState.value
             if (data?.inputValidation is HoleInputValidationState.Valid) {
                 resultsRepository.saveNewResult(
@@ -129,7 +129,7 @@ class MainViewModel(
     }
 
     private fun onNewGame() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             resultsRepository.clearResults()
             playerRepository.clearPlayers()
             _holeInputState.update {
